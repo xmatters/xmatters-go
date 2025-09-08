@@ -225,12 +225,24 @@ func (xmatters *XMattersAPI) Request(httpMethod, uri, contentType string, body i
 // buildURI assembles the base path and queries for API requests.
 func buildURI(path string, options interface{}) string {
 	v, _ := query.Values(options)
-	groupsAttr := v.Get("groups")
-	v.Del("groups")
+	// These are special case attributes, handled separately to ensure that delimiting commas are not encoded in the query string.
+	// Individual elements must be encoded by the provider prior to being sent to the client library.
+	omitEncoding := []string{"groups", "deviceNames"}
+	omitted := []map[string]string{}
+	for _, attr := range omitEncoding {
+		if v.Has(attr) {
+			// If the attribute exists, add it to the omitted slice.
+			omitted = append(omitted, map[string]string{attr: v.Get(attr)})
+			// Remove the attribute from the query string.
+			v.Del(attr)
+		}
+	}
 
 	rawQuery := v.Encode()
-	if groupsAttr != "" {
-		rawQuery += "&groups=" + groupsAttr
+	for _, attr := range omitted {
+		for k, v := range attr {
+			rawQuery += fmt.Sprintf("&%s=%s", k, v)
+		}
 	}
 
 	return (&url.URL{Path: path, RawQuery: rawQuery}).String()

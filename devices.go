@@ -79,7 +79,6 @@ type PushDeviceParams struct {
 	DeviceType        string             `json:"deviceType"`
 	Name              string             `json:"name"`
 	Owner             string             `json:"owner"`
-	Sequence          *int32             `json:"sequence"`
 	PriorityThreshold string             `json:"priorityThreshold"`
 	TestStatus        string             `json:"testStatus"`
 	Timeframes        []*DeviceTimeframe `json:"timeframes"`
@@ -92,7 +91,7 @@ type PushDeviceParams struct {
 	ExternalKey     *string `json:"externalKey"`
 	ExternallyOwned *bool   `json:"externallyOwned"`
 	PhoneNumber     string  `json:"phoneNumber,omitempty"`
-	PIN             string  `json:"pin,omitempty"`
+	PIN             string  `json:"pin"`
 	Status          string  `json:"status,omitempty"`
 	TwoWayDevice    *bool   `json:"twoWayDevice"`
 }
