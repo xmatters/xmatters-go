@@ -61,17 +61,24 @@ Group represents a group in xMatters.
 * func (*XMattersAPI) [PushGroup](/groups.go#L196)
 * func (*XMattersAPI) [DeleteGroup](/groups.go#L219)
 
-### type [GroupMember](/group_roster.go#L23)
+### type [GroupMember](/group_members.go#L23)
 
 `type GroupMember struct { ... }`
 
 GroupMember represents a shorthand version of a group member.
-It contains the ID and type of the member, which can be a person, device, or group.
+It contains the ID and type of the member, which can be a person, device, dynamic team, or another group.
 
-* func (*XMattersAPI) [GetGroupRoster](/group_roster.go#L110)
-* func (*XMattersAPI) [PushGroupRoster](/group_roster.go#L179)
-* func (*XMattersAPI) [PushGroupMembership](/group_roster.go#L229)
-* func (*XMattersAPI) [DeleteGroupMembership](/group_roster.go#L253)
+* func (*XMattersAPI) [GetGroupRoster](/group_members.go#L110)
+* func (*XMattersAPI) [PushGroupRoster](/group_members.go#L179)
+* func (*XMattersAPI) [PushGroupMembership](/group_members.go#L229)
+* func (*XMattersAPI) [DeleteGroupMembership](/group_members.go#L253)
+
+### type [SearchCriteria](/search_criteria.go#L13)
+
+`type SearchCriteria struct { ... }`
+
+SearchCriteria represents the search criteria for filtering dynamic groups in xMatters.
+Contains an operand and a collection of SearchCriterion objects that define membership rules.
 
 ### type [Person](/people.go#L15)
 
