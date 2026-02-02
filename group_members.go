@@ -8,11 +8,11 @@ import (
 )
 
 // -------------------------------------------------------------------------------------------------
-// Group Roster Structs
+// Group Members Structs
 // -------------------------------------------------------------------------------------------------
 
-// GroupRoster represents a group roster in xMatters.
-type GroupRoster struct {
+// GroupMembers represents a group members in xMatters.
+type GroupMembers struct {
 	ID      *string         `json:"groupId"`
 	Group   *GroupReference `json:"group"`
 	Members []*GroupMember
@@ -102,43 +102,43 @@ type GroupMembershipPagination struct {
 }
 
 // -------------------------------------------------------------------------------------------------
-// Group Roster Methods
+// Group Members Methods
 // -------------------------------------------------------------------------------------------------
 
-// GetGroupRoster retrieves the member roster of a group in xMatters.
-// It requires the groupId parameter to identify the specific group, and returns a GroupRoster object.
-func (xmatters *XMattersAPI) GetGroupRoster(groupId string) (GroupRoster, error) {
+// GetGroupMembers retrieves the member members of a group in xMatters.
+// It requires the groupId parameter to identify the specific group, and returns a GroupMembers object.
+func (xmatters *XMattersAPI) GetGroupMembers(groupId string) (GroupMembers, error) {
 	uri := buildURI(fmt.Sprintf("/groups/%s/members", groupId), nil)
 
-	// Use the GetGroupRosterPaginationSet method to get all members of the group
-	groupRoster, err := xmatters.GetGroupRosterPaginationSet(uri)
+	// Use the GetGroupMembersPaginationSet method to get all members of the group
+	groupMembers, err := xmatters.GetGroupMembersPaginationSet(uri)
 	if err != nil {
-		return GroupRoster{}, err
+		return GroupMembers{}, err
 	}
 
-	// Return the fully filled out group roster
-	return groupRoster, nil
+	// Return the fully filled out group members
+	return groupMembers, nil
 }
 
-// GetGroupRosterPaginationSet is a recursive helper function that handles a paginated list of group rosters.
+// GetGroupMembersPaginationSet is a recursive helper function that handles a paginated list of group memberss.
 // It takes a URI as input and retrieves the paginated set from that URI.
 // It checks for additional pages and recursively fetches them until all pages are retrieved.
-func (xmatters *XMattersAPI) GetGroupRosterPaginationSet(uri string) (GroupRoster, error) {
+func (xmatters *XMattersAPI) GetGroupMembersPaginationSet(uri string) (GroupMembers, error) {
 	// Perform the API request.
 	resp, err := xmatters.Request(http.MethodGet, uri, ContentJSON, nil)
 	if err != nil {
-		return GroupRoster{}, err
+		return GroupMembers{}, err
 	}
 
 	// Unmarshal the response body into the GroupMembershipPagination struct.
 	var memberPagination GroupMembershipPagination
 	err = json.Unmarshal(resp, &memberPagination)
 	if err != nil {
-		return GroupRoster{}, newUnmarshalError()
+		return GroupMembers{}, newUnmarshalError()
 	}
 
 	if len(memberPagination.Memberships) == 0 {
-		return GroupRoster{}, nil
+		return GroupMembers{}, nil
 	}
 
 	// Assign members to be returned
@@ -154,66 +154,66 @@ func (xmatters *XMattersAPI) GetGroupRosterPaginationSet(uri string) (GroupRoste
 	if memberPagination.Pagination.Links.Next != nil {
 		nextUri := strings.ReplaceAll(*memberPagination.Pagination.Links.Next, defaultBasePath, "")
 		// Use recursion to get the next set of results
-		nextSet, err := xmatters.GetGroupRosterPaginationSet(nextUri)
+		nextSet, err := xmatters.GetGroupMembersPaginationSet(nextUri)
 		if err != nil {
-			return GroupRoster{}, err
+			return GroupMembers{}, err
 		}
 		// Append the next set of results to the current list
 		memberList = append(memberList, nextSet.Members...)
 	}
 
 	// Assign group information from the first membership entry
-	groupRoster := GroupRoster{
+	groupMembers := GroupMembers{
 		ID:      memberPagination.Memberships[0].Group.ID,
 		Group:   &memberPagination.Memberships[0].Group,
 		Members: memberList,
 	}
 
 	// Return the fully concatenated list of members from all paginated results
-	return groupRoster, nil
+	return groupMembers, nil
 }
 
-// PushGroupRoster updates the members of a group in xMatters to match the desired list of members.
+// PushGroupMembers updates the members of a group in xMatters to match the desired list of members.
 // This method will remove any members from the group that are not in the desired list, and add any members that are not already in the group.
-// The method returns the updated group roster.
-func (xmatters *XMattersAPI) PushGroupRoster(groupId string, params []*GroupMember) (GroupRoster, error) {
-	currentRoster, err := xmatters.GetGroupRoster(groupId)
+// The method returns the updated group members.
+func (xmatters *XMattersAPI) PushGroupMembers(groupId string, params []*GroupMember) (GroupMembers, error) {
+	currentMembers, err := xmatters.GetGroupMembers(groupId)
 	if err != nil {
-		return GroupRoster{}, err
+		return GroupMembers{}, err
 	}
 	// Iterate over current members and remove them from the group if they are not in the desired list
-	for _, member := range currentRoster.Members {
+	for _, member := range currentMembers.Members {
 		if !ContainsMember(*member, params) {
 			if err := xmatters.DeleteGroupMembership(groupId, *member.ID); err != nil {
-				return GroupRoster{}, err
+				return GroupMembers{}, err
 			}
 
 		}
 	}
 	// Iterate over desired members and add them to the group if they are not already members
 	for _, member := range params {
-		if !ContainsMember(*member, currentRoster.Members) {
+		if !ContainsMember(*member, currentMembers.Members) {
 			if _, err := xmatters.PushGroupMembership(groupId, member); err != nil {
-				return GroupRoster{}, err
+				return GroupMembers{}, err
 			}
 		}
 	}
-	// Get the updated roster and return
-	newRoster, err := xmatters.GetGroupRoster(groupId)
+	// Get the updated members and return
+	newMembers, err := xmatters.GetGroupMembers(groupId)
 	if err != nil {
-		return GroupRoster{}, err
+		return GroupMembers{}, err
 	}
-	return newRoster, nil
+	return newMembers, nil
 }
 
-// DeleteGroupRoster removes all members from a group in xMatters.
+// DeleteGroupMembers removes all members from a group in xMatters.
 // It requires the groupId parameter to identify the specific group and returns an error if any issues occur.
-func (xmatters *XMattersAPI) DeleteGroupRoster(groupId string) error {
-	roster, err := xmatters.GetGroupRoster(groupId)
+func (xmatters *XMattersAPI) DeleteGroupMembers(groupId string) error {
+	members, err := xmatters.GetGroupMembers(groupId)
 	if err != nil {
 		return err
 	}
-	for _, member := range roster.Members {
+	for _, member := range members.Members {
 		if err := xmatters.DeleteGroupMembership(groupId, *member.ID); err != nil {
 			return err
 		}
@@ -225,7 +225,7 @@ func (xmatters *XMattersAPI) DeleteGroupRoster(groupId string) error {
 // PushGroupMembership is a helper function that adds a single member to a group in xMatters.
 // It requires the groupId parameter to identify the specific group and the params parameter to specify the member to be added.
 // The method returns the updated GroupMember object.
-// It is used internally by the PushGroupRoster method to add members to a group.
+// It is used internally by the PushGroupMembers method to add members to a group.
 func (xmatters *XMattersAPI) PushGroupMembership(groupId string, params *GroupMember) (GroupMember, error) {
 	uri := buildURI(fmt.Sprintf("/groups/%s/members", groupId), nil)
 
@@ -249,7 +249,7 @@ func (xmatters *XMattersAPI) PushGroupMembership(groupId string, params *GroupMe
 // DeleteGroupMembership is a helper function that removes a member from a group in xMatters.
 // It requires the groupId and memberId parameters to identify the specific group and member to be removed.
 // The method returns an error if any issues occur.
-// It is used internally by the PushGroupRoster method to remove members from a group.
+// It is used internally by the PushGroupMembers method to remove members from a group.
 func (xmatters *XMattersAPI) DeleteGroupMembership(groupId, memberId string) error {
 	uri := buildURI(fmt.Sprintf("/groups/%s/members/%s", groupId, memberId), nil) // The URI for creating or modifying a Group Member in xMatters
 
@@ -271,7 +271,7 @@ func (xmatters *XMattersAPI) DeleteGroupMembership(groupId, memberId string) err
 
 // ContainsMember is a helper function that checks if a GroupMember is in a given list of GroupMembers.
 // It takes a GroupMember and a slice of GroupMembers as input and returns true if the member is found in the list, false otherwise.
-// This function is used internally by the PushGroupRoster method to check if a member is already in the group.
+// This function is used internally by the PushGroupMembers method to check if a member is already in the group.
 func ContainsMember(member GroupMember, target []*GroupMember) bool {
 	for _, m := range target {
 		if *m.ID == *member.ID {

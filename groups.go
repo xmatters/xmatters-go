@@ -28,6 +28,7 @@ type Group struct {
 	Services          []*Service         `json:"services,omitempty"`
 	ExternalKey       *string            `json:"externalKey,omitempty"`
 	ExternallyOwned   *bool              `json:"externallyOwned,omitempty"`
+	Criteria          *SearchCriteria    `json:"criteria,omitempty"`
 }
 
 // GroupPagination contains a paginated list of groups.
@@ -49,12 +50,17 @@ type GetGroupsParams struct {
 	Fields  string `url:"fields,omitempty"`
 	Operand string `url:"operand,omitempty"`
 	// Provider Filters Object
-	GroupType    string `url:"groupType,omitempty"`
-	MemberExists string `url:"member.exists,omitempty"`
-	Members      string `url:"members,omitempty"`
-	Sites        string `url:"sites,omitempty"`
-	Status       string `url:"status,omitempty"`
-	Supervisors  string `url:"supervisors,omitempty"`
+	CreatedAfter      string `url:"createdAfter,omitempty"`
+	CreatedBefore     string `url:"createdBefore,omitempty"`
+	CreatedFrom       string `url:"createdFrom,omitempty"`
+	CreatedTo         string `url:"createdTo,omitempty"`
+	GroupType         string `url:"groupType,omitempty"`
+	MemberExists      string `url:"member.exists,omitempty"`
+	MemberLicenseType string `url:"member.licenseType,omitempty"`
+	Members           string `url:"members,omitempty"`
+	Sites             string `url:"sites,omitempty"`
+	Status            string `url:"status,omitempty"`
+	Supervisors       string `url:"supervisors,omitempty"`
 	// Provider Options Object
 	SortBy    string `url:"sortBy,omitempty"`
 	SortOrder string `url:"sortOrder,omitempty"`
@@ -65,7 +71,7 @@ type PushGroupParams struct {
 	ID                string             `json:"id,omitempty"`
 	TargetName        string             `json:"targetName"`
 	AllowDuplicates   *bool              `json:"allowDuplicates,omitempty"`
-	Description       string             `json:"description,omitempty"`
+	Description       string             `json:"description"`
 	ExternalKey       string             `json:"externalKey,omitempty"`
 	ExternallyOwned   *bool              `json:"externallyOwned,omitempty"`
 	GroupType         string             `json:"groupType,omitempty"`
@@ -75,6 +81,7 @@ type PushGroupParams struct {
 	Status            string             `json:"status,omitempty"`
 	UseDefaultDevices *bool              `json:"useDefaultDevices,omitempty"`
 	Supervisors       []*ReferenceById   `json:"supervisors,omitempty"`
+	Criteria          *SearchCriteria    `json:"criteria,omitempty"`
 }
 
 // -------------------------------------------------------------------------------------------------
