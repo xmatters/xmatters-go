@@ -19,7 +19,7 @@ type GroupRoster struct {
 }
 
 // GroupMember represents a shorthand version of a group member.
-// It contains the ID and type of the member, which can be a person, device, or group.
+// It contains the ID and type of the member, which can be a person, device, dynamic team, or another group.
 type GroupMember struct {
 	ID         *string `json:"id" tfsdk:"id"`
 	MemberType *string `json:"recipientType" tfsdk:"member_type"`
@@ -34,7 +34,7 @@ type GroupReference struct {
 }
 
 // RecipientReference represents a group member in xMatters.
-// Group members can be people, devices, or groups
+// Group members can be people, devices, dynamic teams, or other groups
 // This object might include additional information depending on the type of group member, as defined
 type RecipientReference struct {
 	ID            *string `json:"id"`
