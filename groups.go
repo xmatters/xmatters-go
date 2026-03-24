@@ -56,7 +56,7 @@ type GetGroupsParams struct {
 	CreatedTo         string `url:"createdTo,omitempty"`
 	GroupType         string `url:"groupType,omitempty"`
 	MemberExists      string `url:"member.exists,omitempty"`
-	MemberLicenseType string `url:"member.licenseType,omitempty"`
+	MemberLicenseType string `url:"members.licenseType,omitempty"`
 	Members           string `url:"members,omitempty"`
 	Sites             string `url:"sites,omitempty"`
 	Status            string `url:"status,omitempty"`
