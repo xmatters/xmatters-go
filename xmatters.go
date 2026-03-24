@@ -227,7 +227,7 @@ func buildURI(path string, options interface{}) string {
 	v, _ := query.Values(options)
 	// These are special case attributes, handled separately to ensure that delimiting commas are not encoded in the query string.
 	// Individual elements must be encoded by the provider prior to being sent to the client library.
-	omitEncoding := []string{"groups", "deviceNames"}
+	omitEncoding := []string{"groups", "deviceNames", "sites"}
 	omitted := []map[string]string{}
 	for _, attr := range omitEncoding {
 		if v.Has(attr) {
