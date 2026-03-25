@@ -23,6 +23,12 @@ type SearchCriterion struct {
 	Value         *string `json:"value,omitempty" tfsdk:"value"`
 }
 
+// SearchCriterionPagination contains a paginated list of search criterion.
+type SearchCriterionPagination struct {
+	*Pagination
+	SearchCriterion []*SearchCriterion `json:"data,omitempty"`
+}
+
 // -------------------------------------------------------------------------------------------------
 // Search Criteria Methods
 // -------------------------------------------------------------------------------------------------
@@ -34,7 +40,7 @@ func (c *SearchCriteria) UnmarshalJSON(data []byte) error {
 	aux := &struct {
 		Criterion struct {
 			Criterion []*SearchCriterion `json:"data"`
-		} `json:"criterion" tfsdk:"criterion"`
+		} `json:"criterion,omitempty" tfsdk:"criterion"`
 		*Alias
 	}{
 		Alias: (*Alias)(c),
