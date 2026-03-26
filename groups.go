@@ -72,16 +72,16 @@ type PushGroupParams struct {
 	TargetName        string             `json:"targetName"`
 	AllowDuplicates   *bool              `json:"allowDuplicates,omitempty"`
 	Description       string             `json:"description"`
-	ExternalKey       string             `json:"externalKey,omitempty"`
+	ExternalKey       *string            `json:"externalKey"`
 	ExternallyOwned   *bool              `json:"externallyOwned,omitempty"`
 	GroupType         string             `json:"groupType,omitempty"`
 	ObservedByAll     *bool              `json:"observedByAll,omitempty"`
-	Observers         []*ReferenceByName `json:"observers,omitempty"`
+	Observers         []*ReferenceByName `json:"observers"`
 	Site              string             `json:"site,omitempty"`
 	Status            string             `json:"status,omitempty"`
 	UseDefaultDevices *bool              `json:"useDefaultDevices,omitempty"`
 	Supervisors       []*ReferenceById   `json:"supervisors,omitempty"`
-	Criteria          *SearchCriteria    `json:"criteria,omitempty"`
+	Criteria          *SearchCriteria    `json:"criteria"`
 }
 
 // -------------------------------------------------------------------------------------------------
